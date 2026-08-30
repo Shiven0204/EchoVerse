@@ -32,30 +32,19 @@
 
         <nav class="primary-nav" aria-label="Primary navigation">
           <p class="nav-label">Explore</p>
-          <a class="nav-link is-active" href="#home"
-            ><span class="nav-icon" aria-hidden="true">⌂</span>Home</a
-          >
-          <a class="nav-link" href="#search"
-            ><span class="nav-icon" aria-hidden="true">⌕</span>Search</a
-          >
-          <a class="nav-link" href="#library"
-            ><span class="nav-icon" aria-hidden="true">▤</span>Library</a
-          >
-
-          <p class="nav-label nav-label-spaced">Your space</p>
-          <a class="nav-link" href="#playlists"
-            ><span class="nav-icon" aria-hidden="true">＋</span>Playlists</a
-          >
-          <a class="nav-link" href="#liked"
-            ><span class="nav-icon" aria-hidden="true">♡</span>Liked Songs</a
-          >
+          <a class="nav-link is-active" href="#home">
+            <span class="nav-icon" aria-hidden="true">⌂</span>Home
+          </a>
+          <a class="nav-link" href="#songs-title">
+            <span class="nav-icon" aria-hidden="true">♫</span>Songs
+          </a>
         </nav>
 
         <div class="sidebar-note">
           <span class="note-dot" aria-hidden="true"></span>
           <div>
-            <strong>Made for the moment</strong>
-            <span>Your sound, your way.</span>
+            <strong>Local music</strong>
+            <span>Three songs ready to play.</span>
           </div>
         </div>
       </aside>
@@ -73,295 +62,70 @@
             <span aria-hidden="true">☰</span>
           </button>
           <div class="title-block">
-            <span class="eyebrow">Your listening room</span>
-            <h1>Good evening</h1>
+            <span class="eyebrow">EchoVerse</span>
+            <h1>Local songs</h1>
           </div>
-          <form class="search-form" id="search" role="search">
-            <label class="sr-only" for="search-input">Search music</label>
-            <span class="search-icon" aria-hidden="true">⌕</span>
-            <input
-              id="search-input"
-              type="search"
-              placeholder="Search songs, artists, moods..."
-            />
-          </form>
-          <button
-            class="profile-button"
-            type="button"
-            aria-label="Open profile menu"
-          >
-            <span class="avatar">JV</span>
-            <span class="profile-name">Jamie V.</span>
-            <span class="profile-chevron" aria-hidden="true">⌄</span>
-          </button>
         </header>
 
         <main class="main-content" id="home">
-          <section class="welcome-panel" aria-labelledby="welcome-title">
-            <div class="welcome-copy">
-              <span class="eyebrow">Thursday, August 27</span>
-              <h2 id="welcome-title">
-                Discover your next<br /><em>favorite sound.</em>
-              </h2>
-              <p>
-                A handpicked pocket of rhythm, calm, and everything in between.
-              </p>
-              <a class="primary-button" href="#featured"
-                ><span aria-hidden="true">▶</span> Start exploring</a
-              >
-            </div>
-            <div class="sound-orbit" aria-hidden="true">
-              <span class="orbit orbit-one"></span>
-              <span class="orbit orbit-two"></span>
-              <span class="orbit-core">♫</span>
-            </div>
-            <div class="welcome-caption">
-              <span class="caption-line"></span> Curated for your evening
-            </div>
-          </section>
-
-          <section
-            class="content-section"
-            id="featured"
-            aria-labelledby="featured-title"
-          >
-            <div class="section-heading">
-              <div>
-                <span class="eyebrow">A little spark</span>
-                <h2 id="featured-title">Featured for you</h2>
-              </div>
-              <a class="text-link" href="#featured"
-                >View all <span aria-hidden="true">→</span></a
-              >
-            </div>
-            <div class="card-grid featured-grid">
-              <article class="music-card feature-card">
-                <div class="artwork artwork-dawn">
-                  <span>DAWN<br />FM</span
-                  ><button
-                    class="card-play"
-                    type="button"
-                    aria-label="Play Dawn FM preview"
-                  >
-                    ▶
-                  </button>
-                </div>
-                <div class="card-copy">
-                  <h3>First Light</h3>
-                  <p>Solara &middot; New beginnings</p>
-                </div>
-              </article>
-              <article class="music-card feature-card">
-                <div class="artwork artwork-tide">
-                  <span>LOW<br />TIDE</span
-                  ><button
-                    class="card-play"
-                    type="button"
-                    aria-label="Play Low Tide preview"
-                  >
-                    ▶
-                  </button>
-                </div>
-                <div class="card-copy">
-                  <h3>Drift Away</h3>
-                  <p>Blue Current &middot; Chillwave</p>
-                </div>
-              </article>
-              <article class="music-card feature-card">
-                <div class="artwork artwork-static">
-                  <span>STATIC<br />GARDEN</span
-                  ><button
-                    class="card-play"
-                    type="button"
-                    aria-label="Play Static Garden preview"
-                  >
-                    ▶
-                  </button>
-                </div>
-                <div class="card-copy">
-                  <h3>Neon Bloom</h3>
-                  <p>Paper Satellites &middot; Indie pop</p>
-                </div>
-              </article>
-            </div>
-          </section>
-
-          <section
-            class="content-section"
-            id="library"
-            aria-labelledby="recent-title"
-          >
-            <div class="section-heading">
-              <div>
-                <span class="eyebrow">Back in rotation</span>
-                <h2 id="recent-title">Recently played</h2>
-              </div>
-              <a class="text-link" href="#library"
-                >See history <span aria-hidden="true">→</span></a
-              >
-            </div>
-            <div class="compact-grid">
-              <article class="music-card compact-card">
-                <div class="artwork artwork-moss">
-                  <span>FIELD<br />NOTES</span
-                  ><button
-                    class="card-play"
-                    type="button"
-                    aria-label="Play Field Notes preview"
-                  >
-                    ▶
-                  </button>
-                </div>
-                <div class="card-copy">
-                  <h3>Open Windows</h3>
-                  <p>Juniper Lane</p>
-                </div>
-              </article>
-              <article class="music-card compact-card">
-                <div class="artwork artwork-night">
-                  <span>NIGHT<br />BUS</span
-                  ><button
-                    class="card-play"
-                    type="button"
-                    aria-label="Play Night Bus preview"
-                  >
-                    ▶
-                  </button>
-                </div>
-                <div class="card-copy">
-                  <h3>After Hours</h3>
-                  <p>Violet Arcade</p>
-                </div>
-              </article>
-              <article class="music-card compact-card">
-                <div class="artwork artwork-sand">
-                  <span>SOFT<br />FOCUS</span
-                  ><button
-                    class="card-play"
-                    type="button"
-                    aria-label="Play Soft Focus preview"
-                  >
-                    ▶
-                  </button>
-                </div>
-                <div class="card-copy">
-                  <h3>Warm Static</h3>
-                  <p>Northline</p>
-                </div>
-              </article>
-              <article class="music-card compact-card">
-                <div class="artwork artwork-rose">
-                  <span>ROOM<br />108</span
-                  ><button
-                    class="card-play"
-                    type="button"
-                    aria-label="Play Room 108 preview"
-                  >
-                    ▶
-                  </button>
-                </div>
-                <div class="card-copy">
-                  <h3>Stay Awhile</h3>
-                  <p>Marrow &middot; Acoustic</p>
-                </div>
-              </article>
-            </div>
-          </section>
-
           <section
             class="content-section popular-section"
-            aria-labelledby="popular-title"
+            aria-labelledby="songs-title"
           >
             <div class="section-heading">
               <div>
-                <span class="eyebrow">The community is listening</span>
-                <h2 id="popular-title">Popular tracks</h2>
+                <span class="eyebrow">Available in the music folder</span>
+                <h2 id="songs-title">Songs</h2>
               </div>
-              <a class="text-link" href="#popular-title"
-                >Explore charts <span aria-hidden="true">→</span></a
-              >
             </div>
             <div class="track-list">
-              <article class="track-row">
+              <article class="track-row" data-song-index="0">
                 <span class="track-number">01</span>
-                <div class="mini-art artwork-tide"><span>LT</span></div>
+                <div class="mini-art artwork-static"><span>BR</span></div>
                 <div class="track-info">
-                  <h3>Drift Away</h3>
-                  <p>Blue Current</p>
+                  <h3>Barsaat</h3>
+                  <p>Banjaare &amp; Roni</p>
                 </div>
-                <span class="track-meta">3:42</span
-                ><button
-                  class="icon-button track-more"
+                <span class="track-meta">3:05</span>
+                <button
+                  class="icon-button track-play"
                   type="button"
-                  aria-label="More options for Drift Away"
+                  aria-label="Play Barsaat"
                 >
-                  •••
+                  ▶
                 </button>
               </article>
-              <article class="track-row">
+              <article class="track-row" data-song-index="1">
                 <span class="track-number">02</span>
-                <div class="mini-art artwork-dawn"><span>DF</span></div>
+                <div class="mini-art artwork-tide"><span>B</span></div>
                 <div class="track-info">
-                  <h3>First Light</h3>
-                  <p>Solara</p>
+                  <h3>Bairan</h3>
+                  <p>Banjaare</p>
                 </div>
-                <span class="track-meta">4:08</span
-                ><button
-                  class="icon-button track-more"
+                <span class="track-meta">2:30</span>
+                <button
+                  class="icon-button track-play"
                   type="button"
-                  aria-label="More options for First Light"
+                  aria-label="Play Bairan"
                 >
-                  •••
+                  ▶
                 </button>
               </article>
-              <article class="track-row">
+              <article class="track-row" data-song-index="2">
                 <span class="track-number">03</span>
-                <div class="mini-art artwork-night"><span>NB</span></div>
+                <div class="mini-art artwork-dawn"><span>TZ</span></div>
                 <div class="track-info">
-                  <h3>After Hours</h3>
-                  <p>Violet Arcade</p>
+                  <h3>Tu Zaroori</h3>
+                  <p>Sharib Toshi, Sunidhi Chauhan &amp; Sharib Sabri</p>
                 </div>
-                <span class="track-meta">2:56</span
-                ><button
-                  class="icon-button track-more"
+                <span class="track-meta">4:49</span>
+                <button
+                  class="icon-button track-play"
                   type="button"
-                  aria-label="More options for After Hours"
+                  aria-label="Play Tu Zaroori"
                 >
-                  •••
+                  ▶
                 </button>
-              </article>
-            </div>
-          </section>
-
-          <section
-            class="content-section"
-            id="playlists"
-            aria-labelledby="playlist-title"
-          >
-            <div class="section-heading">
-              <div>
-                <span class="eyebrow">Made by you</span>
-                <h2 id="playlist-title">Your playlists</h2>
-              </div>
-              <a class="text-link" href="#playlists"
-                >Manage <span aria-hidden="true">→</span></a
-              >
-            </div>
-            <div class="playlist-grid">
-              <article class="playlist-card playlist-sunset">
-                <span class="playlist-symbol">✦</span>
-                <h3>Sunset Drive</h3>
-                <p>18 tracks</p>
-              </article>
-              <article class="playlist-card playlist-focus">
-                <span class="playlist-symbol">◒</span>
-                <h3>Deep Focus</h3>
-                <p>24 tracks</p>
-              </article>
-              <article class="playlist-card playlist-weekend">
-                <span class="playlist-symbol">♪</span>
-                <h3>Weekend Energy</h3>
-                <p>31 tracks</p>
               </article>
             </div>
           </section>
@@ -373,17 +137,10 @@
       <audio id="audio-player" preload="metadata"></audio>
 
       <div class="now-playing">
-        <div class="player-art artwork-static"><span>NB</span></div>
+        <div class="player-art artwork-static"><span>BR</span></div>
         <div class="now-playing-copy">
-          <strong>Neon Bloom</strong><span>Paper Satellites</span>
+          <strong>Barsaat</strong><span>Banjaare &amp; Roni</span>
         </div>
-        <button
-          class="icon-button player-like"
-          type="button"
-          aria-label="Like Neon Bloom"
-        >
-          ♡
-        </button>
       </div>
       <div class="player-controls">
         <div class="control-buttons">
@@ -406,13 +163,7 @@
       <div class="player-options">
         <span class="volume-icon" aria-hidden="true">⌁</span
         ><label class="sr-only" for="volume">Volume</label
-        ><input id="volume" type="range" min="0" max="100" value="68" /><button
-          class="icon-button"
-          type="button"
-          aria-label="Open additional player options"
-        >
-          •••
-        </button>
+        ><input id="volume" type="range" min="0" max="100" value="68" />
       </div>
     </footer>
   </body>

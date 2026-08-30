@@ -1,22 +1,23 @@
-// Simple local song data for now.
-// This is beginner-friendly and easy to replace later with an API response.
+// Simple local song data.
+// We use the actual MP3 files from the music folder.
 const songs = [
   {
     title: "Barsaat",
     artist: "Banjaare & Roni",
-    source: "music/song1.wav",
+    source: "music/Banjaare & Roni - Barsaat - (320 Kbps).mp3",
     cover: "assets/images/default-album.jpg",
   },
   {
     title: "Bairan",
     artist: "Banjaare",
-    source: "music/song2.wav",
+    source: "music/Banjaare - Bairan - (320 Kbps).mp3",
     cover: "assets/images/default-album.jpg",
   },
   {
     title: "Tu Zaroori",
     artist: "Sharib Toshi, Sunidhi Chauhan & Sharib Sabri",
-    source: "music/song3.wav",
+    source:
+      "music/Sharib Toshi, Sunidhi Chauhan, & Sharib Sabri - Tu Zaroori (From _Zid_) - (320 Kbps).mp3",
     cover: "assets/images/default-album.jpg",
   },
 ];
@@ -34,11 +35,13 @@ const progressValue = document.querySelector(".progress-value");
 const progressTrack = document.querySelector(".progress-track");
 const volumeSlider = document.getElementById("volume");
 const volumeIcon = document.querySelector(".volume-icon");
-const controlButtons = document.querySelectorAll(
-  ".control-buttons .icon-button"
+const previousButton = document.querySelector(
+  '.control-buttons .icon-button[aria-label="Previous track"]'
 );
-const previousButton = controlButtons[0];
-const nextButton = controlButtons[1];
+const nextButton = document.querySelector(
+  '.control-buttons .icon-button[aria-label="Next track"]'
+);
+const trackRows = document.querySelectorAll(".track-row[data-song-index]");
 let previousVolume = 0.68;
 let isDraggingProgress = false;
 
@@ -113,6 +116,7 @@ function updateVolumeUI() {
   const volumePercentage = audioPlayer.muted
     ? 0
     : Math.round(audioPlayer.volume * 100);
+
   volumeSlider.value = String(volumePercentage);
   volumeIcon.textContent =
     audioPlayer.muted || volumePercentage === 0 ? "🔇" : "🔊";
@@ -120,58 +124,6 @@ function updateVolumeUI() {
     "aria-label",
     audioPlayer.muted || volumePercentage === 0 ? "Unmute" : "Mute"
   );
-}
-
-function loadSong(index) {
-  if (!songs[index]) {
-    return;
-  }
-
-  currentSongIndex = index;
-  const song = songs[currentSongIndex];
-
-  if (audioPlayer) {
-    audioPlayer.src = song.source;
-    audioPlayer.load();
-  }
-
-  if (playerTitle) {
-    playerTitle.textContent = song.title;
-  }
-
-  if (playerArtist) {
-    playerArtist.textContent = song.artist;
-  }
-
-  if (playerArtwork) {
-    playerArtwork.style.backgroundImage = `url('${song.cover}')`;
-    playerArtwork.style.backgroundSize = "cover";
-    playerArtwork.style.backgroundPosition = "center";
-  }
-
-  updateProgressBar();
-}
-
-function goToNextSong() {
-  const nextIndex = (currentSongIndex + 1) % songs.length;
-  loadSong(nextIndex);
-
-  if (audioPlayer && !audioPlayer.paused) {
-    audioPlayer.play().catch((error) => {
-      console.error("Unable to play next song:", error);
-    });
-  }
-}
-
-function goToPreviousSong() {
-  const previousIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-  loadSong(previousIndex);
-
-  if (audioPlayer && !audioPlayer.paused) {
-    audioPlayer.play().catch((error) => {
-      console.error("Unable to play previous song:", error);
-    });
-  }
 }
 
 function updatePlayButton(isPlaying) {
@@ -186,6 +138,86 @@ function updatePlayButton(isPlaying) {
   );
 }
 
+function isPlayerPlaying() {
+  return audioPlayer && !audioPlayer.paused;
+}
+
+function updateSongInfo(song) {
+  if (playerTitle) {
+    playerTitle.textContent = song.title;
+  }
+
+  if (playerArtist) {
+    playerArtist.textContent = song.artist;
+  }
+
+  if (playerArtwork) {
+    playerArtwork.style.backgroundImage = `url('${song.cover}')`;
+    playerArtwork.style.backgroundSize = "cover";
+    playerArtwork.style.backgroundPosition = "center";
+
+    const artworkLabel = playerArtwork.querySelector("span");
+    if (artworkLabel) {
+      artworkLabel.textContent = song.title.slice(0, 2).toUpperCase();
+    }
+  }
+}
+
+function playCurrentSong() {
+  if (!audioPlayer) {
+    return;
+  }
+
+  audioPlayer
+    .play()
+    .then(() => updatePlayButton(true))
+    .catch((error) => {
+      console.error("Playback failed:", error);
+      updatePlayButton(false);
+    });
+}
+
+function loadSong(index, shouldPlay = false) {
+  if (!songs[index]) {
+    return;
+  }
+
+  const song = songs[index];
+  currentSongIndex = index;
+
+  if (audioPlayer) {
+    audioPlayer.pause();
+    audioPlayer.src = song.source;
+
+    if (shouldPlay) {
+      audioPlayer
+        .play()
+        .then(() => updatePlayButton(true))
+        .catch((error) => {
+          console.error("Playback failed:", error);
+          updatePlayButton(false);
+        });
+    }
+  }
+
+  updateSongInfo(song);
+  updateProgressBar();
+}
+
+function goToNextSong() {
+  const nextIndex = (currentSongIndex + 1) % songs.length;
+  const shouldPlay = isPlayerPlaying();
+
+  loadSong(nextIndex, shouldPlay);
+}
+
+function goToPreviousSong() {
+  const previousIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+  const shouldPlay = isPlayerPlaying();
+
+  loadSong(previousIndex, shouldPlay);
+}
+
 if (audioPlayer) {
   audioPlayer.volume = previousVolume;
   audioPlayer.addEventListener("play", () => updatePlayButton(true));
@@ -194,7 +226,6 @@ if (audioPlayer) {
   audioPlayer.addEventListener("canplay", updateProgressBar);
   audioPlayer.addEventListener("timeupdate", updateProgressBar);
   audioPlayer.addEventListener("ended", goToNextSong);
-  updatePlayButton(audioPlayer.paused === false);
 }
 
 if (volumeSlider && audioPlayer) {
@@ -246,11 +277,14 @@ if (playButton) {
     if (audioPlayer.paused) {
       try {
         await audioPlayer.play();
+        updatePlayButton(true);
       } catch (error) {
         console.error("Playback failed:", error);
+        updatePlayButton(false);
       }
     } else {
       audioPlayer.pause();
+      updatePlayButton(false);
     }
   });
 }
@@ -263,27 +297,42 @@ if (nextButton) {
   nextButton.addEventListener("click", goToNextSong);
 }
 
+trackRows.forEach((trackRow) => {
+  trackRow.addEventListener("click", () => {
+    const songIndex = Number(trackRow.dataset.songIndex);
+    loadSong(songIndex);
+    playCurrentSong();
+  });
+});
+
 if (audioPlayer) {
   updateVolumeUI();
 }
 
 loadSong(currentSongIndex);
 
-// Phase 1 keeps JavaScript small: it only manages the mobile navigation shell.
 const sidebar = document.querySelector("#sidebar");
 const openButton = document.querySelector("[data-nav-open]");
 const closeButton = document.querySelector("[data-nav-close]");
 const navigationLinks = document.querySelectorAll(".nav-link");
 
 function setNavigationState(isOpen) {
+  if (!sidebar || !openButton) {
+    return;
+  }
+
   sidebar.classList.toggle("is-open", isOpen);
   openButton.setAttribute("aria-expanded", String(isOpen));
 }
 
-openButton.addEventListener("click", () => setNavigationState(true));
-closeButton.addEventListener("click", () => setNavigationState(false));
+if (openButton) {
+  openButton.addEventListener("click", () => setNavigationState(true));
+}
 
-// Closing after a selection keeps the mobile layout tidy while preserving the anchor link.
+if (closeButton) {
+  closeButton.addEventListener("click", () => setNavigationState(false));
+}
+
 navigationLinks.forEach((link) => {
   link.addEventListener("click", () => setNavigationState(false));
 });
