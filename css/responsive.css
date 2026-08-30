@@ -1,0 +1,185 @@
+@media (max-width: 1050px) {
+  :root {
+    --sidebar-width: 215px;
+  }
+  .topbar {
+    gap: 18px;
+  }
+  .profile-name,
+  .profile-chevron {
+    display: none;
+  }
+  .featured-grid {
+    gap: 14px;
+  }
+  .welcome-panel {
+    padding: 36px;
+  }
+  .sound-orbit {
+    width: 220px;
+  }
+}
+
+@media (max-width: 780px) {
+  :root {
+    --player-height: 142px;
+  }
+  .app-shell {
+    min-height: calc(100vh - var(--player-height));
+  }
+  .sidebar {
+    bottom: 0;
+    width: min(290px, 86vw);
+    padding-top: 22px;
+    box-shadow: 18px 0 35px rgba(0, 0, 0, 0.32);
+    transform: translateX(-102%);
+    transition: transform 0.25s ease;
+  }
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+  .sidebar-close,
+  .menu-button {
+    display: inline-grid;
+  }
+  .menu-button {
+    flex: 0 0 auto;
+  }
+  .page-area {
+    width: 100%;
+    margin-left: 0;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    min-height: 112px;
+    padding: 18px 22px;
+  }
+  .title-block {
+    order: 2;
+    flex: 1;
+    min-width: 0;
+  }
+  .search-form {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
+  .profile-button {
+    order: 1;
+    margin-left: auto;
+  }
+  .main-content {
+    padding: 28px 22px 44px;
+  }
+  .welcome-panel {
+    min-height: 320px;
+    padding: 31px 27px;
+    align-items: flex-start;
+  }
+  .sound-orbit {
+    position: absolute;
+    right: -18px;
+    bottom: 12px;
+    width: 205px;
+    opacity: 0.7;
+  }
+  .welcome-caption {
+    right: 20px;
+    bottom: 17px;
+  }
+  .featured-grid {
+    grid-template-columns: repeat(3, minmax(145px, 1fr));
+    overflow-x: auto;
+    padding: 2px 1px 10px;
+    scroll-snap-type: x mandatory;
+  }
+  .featured-grid .music-card {
+    scroll-snap-align: start;
+  }
+  .compact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .playlist-grid {
+    grid-template-columns: repeat(3, minmax(165px, 1fr));
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .player-bar {
+    grid-template-columns: 1fr auto;
+    gap: 8px 16px;
+    padding: 11px 18px;
+  }
+  .now-playing {
+    min-width: 0;
+  }
+  .player-controls {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    max-width: none;
+  }
+  .player-options {
+    grid-column: 2;
+  }
+  .player-options input[type="range"],
+  .player-options .icon-button {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+  .main-content {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+  .welcome-panel {
+    min-height: 340px;
+    padding: 26px 21px;
+  }
+  .welcome-copy h2 {
+    font-size: 32px;
+    letter-spacing: -1.2px;
+  }
+  .welcome-copy p {
+    max-width: 245px;
+    font-size: 13px;
+  }
+  .welcome-caption {
+    font-size: 9px;
+  }
+  .section-heading h2 {
+    font-size: 20px;
+  }
+  .text-link {
+    font-size: 10px;
+  }
+  .compact-grid {
+    gap: 14px 11px;
+  }
+  .track-row {
+    grid-template-columns: 23px 40px minmax(0, 1fr) 32px;
+    gap: 9px;
+  }
+  .track-more {
+    display: none;
+  }
+  .mini-art {
+    width: 40px;
+    height: 40px;
+  }
+  .track-meta {
+    font-size: 10px;
+  }
+  .player-like {
+    display: none;
+  }
+  .player-bar {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
