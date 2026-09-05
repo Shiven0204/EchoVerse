@@ -1,315 +1,151 @@
-// Simple local song data.
-// We use the actual MP3 files from the music folder.
-const songs = [
-  {
-    title: "Barsaat",
-    artist: "Banjaare & Roni",
-    source: "music/Banjaare & Roni - Barsaat - (320 Kbps).mp3",
-    cover: "assets/images/default-album.jpg",
-  },
-  {
-    title: "Bairan",
-    artist: "Banjaare",
-    source: "music/Banjaare - Bairan - (320 Kbps).mp3",
-    cover: "assets/images/default-album.jpg",
-  },
-  {
-    title: "Tu Zaroori",
-    artist: "Sharib Toshi, Sunidhi Chauhan & Sharib Sabri",
-    source:
-      "music/Sharib Toshi, Sunidhi Chauhan, & Sharib Sabri - Tu Zaroori (From _Zid_) - (320 Kbps).mp3",
-    cover: "assets/images/default-album.jpg",
-  },
-];
+import { songs } from "./data/songs.js";
+import {
+  getLikedSongs,
+  saveLikedSongs,
+  getRecentlyPlayed,
+  saveRecentlyPlayed,
+} from "./storage/storage.js";
+import { searchSongs } from "./search/search.js";
+import { createPlayer } from "./player/player.js";
+import { createUI } from "./ui/ui.js";
 
-let currentSongIndex = 0;
+const MAX_RECENT_SONGS = 5;
+const ui = createUI(songs);
+let currentView = "all";
+let likedSongIds = getValidSongIds(getLikedSongs());
+let recentlyPlayedIds = getValidSongIds(getRecentlyPlayed());
 
-const audioPlayer = document.getElementById("audio-player");
-const playerTitle = document.querySelector(".now-playing-copy strong");
-const playerArtist = document.querySelector(".now-playing-copy span");
-const playerArtwork = document.querySelector(".player-art");
-const playButton = document.querySelector(".play-button");
-const currentTimeLabel = document.querySelector(".time-current");
-const totalTimeLabel = document.querySelector(".time-total");
-const progressValue = document.querySelector(".progress-value");
-const progressTrack = document.querySelector(".progress-track");
-const volumeSlider = document.getElementById("volume");
-const volumeIcon = document.querySelector(".volume-icon");
-const previousButton = document.querySelector(
-  '.control-buttons .icon-button[aria-label="Previous track"]'
-);
-const nextButton = document.querySelector(
-  '.control-buttons .icon-button[aria-label="Next track"]'
-);
-const trackRows = document.querySelectorAll(".track-row[data-song-index]");
-let previousVolume = 0.68;
-let isDraggingProgress = false;
-
-function formatTime(totalSeconds) {
-  if (!Number.isFinite(totalSeconds) || totalSeconds < 0) {
-    return "0:00";
-  }
-
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = Math.floor(totalSeconds % 60);
-
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
-}
-
-function updateProgressBar() {
-  if (!audioPlayer) {
-    return;
-  }
-
-  const currentTime = audioPlayer.currentTime || 0;
-  const duration = audioPlayer.duration || 0;
-
-  if (currentTimeLabel) {
-    currentTimeLabel.textContent = formatTime(currentTime);
-  }
-
-  if (totalTimeLabel) {
-    totalTimeLabel.textContent = formatTime(duration);
-  }
-
-  if (progressValue && progressTrack) {
-    const percentage = duration ? (currentTime / duration) * 100 : 0;
-    progressValue.style.width = `${percentage}%`;
-  }
-}
-
-function seekSong(event) {
-  if (
-    !audioPlayer ||
-    !progressTrack ||
-    !Number.isFinite(audioPlayer.duration)
-  ) {
-    return;
-  }
-
-  const bounds = progressTrack.getBoundingClientRect();
-  const clickPosition = (event.clientX - bounds.left) / bounds.width;
-  const clampedPercentage = Math.min(Math.max(clickPosition, 0), 1);
-
-  audioPlayer.currentTime = clampedPercentage * audioPlayer.duration;
-  updateProgressBar();
-}
-
-function startScrubbing(event) {
-  if (!progressTrack) {
-    return;
-  }
-
-  isDraggingProgress = true;
-  seekSong(event);
-}
-
-function stopScrubbing() {
-  isDraggingProgress = false;
-}
-
-function updateVolumeUI() {
-  if (!audioPlayer || !volumeSlider || !volumeIcon) {
-    return;
-  }
-
-  const volumePercentage = audioPlayer.muted
-    ? 0
-    : Math.round(audioPlayer.volume * 100);
-
-  volumeSlider.value = String(volumePercentage);
-  volumeIcon.textContent =
-    audioPlayer.muted || volumePercentage === 0 ? "🔇" : "🔊";
-  volumeIcon.setAttribute(
-    "aria-label",
-    audioPlayer.muted || volumePercentage === 0 ? "Unmute" : "Mute"
+function getValidSongIds(songIds) {
+  return [...new Set(songIds)].filter((songId) =>
+    songs.some((song) => song.id === songId)
   );
 }
 
-function updatePlayButton(isPlaying) {
-  if (!playButton) {
-    return;
+function getSongById(songId) {
+  return songs.find((song) => song.id === songId);
+}
+
+function getViewSongs() {
+  if (currentView === "liked") {
+    return likedSongIds.map(getSongById).filter(Boolean);
+  }
+  if (currentView === "recent") {
+    return recentlyPlayedIds.map(getSongById).filter(Boolean);
+  }
+  return songs;
+}
+
+function getCollectionMessage(view, hasSearchTerm) {
+  if (hasSearchTerm) return "No songs found. Try another song or artist.";
+  if (view === "liked")
+    return "No liked songs yet. Start liking songs to build your collection.";
+  if (view === "recent")
+    return "No recently played songs. Start listening to build your history.";
+  return "No songs found. Try another song or artist.";
+}
+
+function renderCurrentView() {
+  const query = ui.searchInput ? ui.searchInput.value : "";
+  const hasSearchTerm = query.trim().length > 0;
+  const visibleSongs = searchSongs(getViewSongs(), query);
+
+  ui.showView(currentView);
+  if (currentView === "library") {
+    const liked = searchSongs(
+      likedSongIds.map(getSongById).filter(Boolean),
+      query
+    );
+    const recent = searchSongs(
+      recentlyPlayedIds.map(getSongById).filter(Boolean),
+      query
+    );
+    const all = searchSongs(songs, query);
+    ui.renderLibrary(
+      {
+        liked,
+        recent,
+        all,
+        likedMessage: hasSearchTerm
+          ? "No songs found. Try another song or artist."
+          : "No liked songs yet. Start liking songs to build your collection.",
+        recentMessage: hasSearchTerm
+          ? "No songs found. Try another song or artist."
+          : "No recently played songs. Start listening to build your history.",
+      },
+      likedSongIds
+    );
+  } else {
+    ui.renderSongs(
+      visibleSongs,
+      getCollectionMessage(currentView, hasSearchTerm),
+      likedSongIds
+    );
   }
 
-  playButton.textContent = isPlaying ? "❚❚" : "▶";
-  playButton.setAttribute(
-    "aria-label",
-    isPlaying ? "Pause track" : "Play track"
-  );
+  const currentSong = player.getCurrentSong();
+  ui.updateActiveSong(currentSong ? currentSong.id : null, player.isPlaying());
 }
 
-function isPlayerPlaying() {
-  return audioPlayer && !audioPlayer.paused;
+function toggleLike(songId) {
+  if (!getSongById(songId)) return;
+  likedSongIds = likedSongIds.includes(songId)
+    ? likedSongIds.filter((id) => id !== songId)
+    : [...likedSongIds, songId];
+  saveLikedSongs(likedSongIds);
+  renderCurrentView();
 }
 
-function updateSongInfo(song) {
-  if (playerTitle) {
-    playerTitle.textContent = song.title;
-  }
-
-  if (playerArtist) {
-    playerArtist.textContent = song.artist;
-  }
-
-  if (playerArtwork) {
-    playerArtwork.style.backgroundImage = `url('${song.cover}')`;
-    playerArtwork.style.backgroundSize = "cover";
-    playerArtwork.style.backgroundPosition = "center";
-
-    const artworkLabel = playerArtwork.querySelector("span");
-    if (artworkLabel) {
-      artworkLabel.textContent = song.title.slice(0, 2).toUpperCase();
-    }
-  }
+function addToRecentlyPlayed(songId) {
+  if (!getSongById(songId)) return;
+  recentlyPlayedIds = [
+    songId,
+    ...recentlyPlayedIds.filter((id) => id !== songId),
+  ].slice(0, MAX_RECENT_SONGS);
+  saveRecentlyPlayed(recentlyPlayedIds);
+  renderCurrentView();
 }
 
-function playCurrentSong() {
-  if (!audioPlayer) {
-    return;
-  }
-
-  audioPlayer
-    .play()
-    .then(() => updatePlayButton(true))
-    .catch((error) => {
-      console.error("Playback failed:", error);
-      updatePlayButton(false);
-    });
-}
-
-function loadSong(index, shouldPlay = false) {
-  if (!songs[index]) {
-    return;
-  }
-
-  const song = songs[index];
-  currentSongIndex = index;
-
-  if (audioPlayer) {
-    audioPlayer.pause();
-    audioPlayer.src = song.source;
-
-    if (shouldPlay) {
-      audioPlayer
-        .play()
-        .then(() => updatePlayButton(true))
-        .catch((error) => {
-          console.error("Playback failed:", error);
-          updatePlayButton(false);
-        });
-    }
-  }
-
-  updateSongInfo(song);
-  updateProgressBar();
-}
-
-function goToNextSong() {
-  const nextIndex = (currentSongIndex + 1) % songs.length;
-  const shouldPlay = isPlayerPlaying();
-
-  loadSong(nextIndex, shouldPlay);
-}
-
-function goToPreviousSong() {
-  const previousIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-  const shouldPlay = isPlayerPlaying();
-
-  loadSong(previousIndex, shouldPlay);
-}
-
-if (audioPlayer) {
-  audioPlayer.volume = previousVolume;
-  audioPlayer.addEventListener("play", () => updatePlayButton(true));
-  audioPlayer.addEventListener("pause", () => updatePlayButton(false));
-  audioPlayer.addEventListener("loadedmetadata", updateProgressBar);
-  audioPlayer.addEventListener("canplay", updateProgressBar);
-  audioPlayer.addEventListener("timeupdate", updateProgressBar);
-  audioPlayer.addEventListener("ended", goToNextSong);
-}
-
-if (volumeSlider && audioPlayer) {
-  volumeSlider.addEventListener("input", (event) => {
-    const value = Number(event.target.value) / 100;
-    previousVolume = value;
-    audioPlayer.volume = value;
-    audioPlayer.muted = value === 0;
-    updateVolumeUI();
-  });
-}
-
-if (volumeIcon && audioPlayer) {
-  volumeIcon.addEventListener("click", () => {
-    if (audioPlayer.muted) {
-      audioPlayer.muted = false;
-      audioPlayer.volume = previousVolume || 0.68;
-    } else {
-      previousVolume = audioPlayer.volume || previousVolume;
-      audioPlayer.muted = true;
-      audioPlayer.volume = 0;
-    }
-
-    updateVolumeUI();
-  });
-}
-
-if (progressTrack) {
-  progressTrack.addEventListener("click", seekSong);
-  progressTrack.addEventListener("pointerdown", startScrubbing);
-}
-
-window.addEventListener("pointermove", (event) => {
-  if (!isDraggingProgress) {
-    return;
-  }
-
-  seekSong(event);
+const player = createPlayer(songs, {
+  onPlay: (song) => {
+    addToRecentlyPlayed(song.id);
+    ui.updateActiveSong(song.id, true);
+  },
+  onPause: () => {
+    const song = player.getCurrentSong();
+    ui.updateActiveSong(song ? song.id : null, false);
+  },
 });
 
-window.addEventListener("pointerup", stopScrubbing);
+document.addEventListener("click", (event) => {
+  const likeButton = event.target.closest(".like-button");
+  if (likeButton) {
+    event.stopPropagation();
+    toggleLike(Number(likeButton.dataset.songId));
+    return;
+  }
 
-if (playButton) {
-  playButton.addEventListener("click", async () => {
-    if (!audioPlayer) {
-      return;
-    }
-
-    if (audioPlayer.paused) {
-      try {
-        await audioPlayer.play();
-        updatePlayButton(true);
-      } catch (error) {
-        console.error("Playback failed:", error);
-        updatePlayButton(false);
-      }
-    } else {
-      audioPlayer.pause();
-      updatePlayButton(false);
-    }
-  });
-}
-
-if (previousButton) {
-  previousButton.addEventListener("click", goToPreviousSong);
-}
-
-if (nextButton) {
-  nextButton.addEventListener("click", goToNextSong);
-}
-
-trackRows.forEach((trackRow) => {
-  trackRow.addEventListener("click", () => {
-    const songIndex = Number(trackRow.dataset.songIndex);
-    loadSong(songIndex);
-    playCurrentSong();
-  });
+  const trackRow = event.target.closest(".track-row");
+  if (trackRow) {
+    const song = getSongById(Number(trackRow.dataset.songId));
+    if (song) player.loadSong(songs.indexOf(song));
+    player.playCurrentSong();
+  }
 });
 
-if (audioPlayer) {
-  updateVolumeUI();
-}
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const trackRow = event.target.closest(".track-row");
+  if (!trackRow || event.target.closest("button")) return;
+  event.preventDefault();
+  const song = getSongById(Number(trackRow.dataset.songId));
+  if (song) player.loadSong(songs.indexOf(song));
+  player.playCurrentSong();
+});
 
-loadSong(currentSongIndex);
+const searchForm = document.querySelector(".search-form");
+if (ui.searchInput) ui.searchInput.addEventListener("input", renderCurrentView);
+if (searchForm)
+  searchForm.addEventListener("submit", (event) => event.preventDefault());
 
 const sidebar = document.querySelector("#sidebar");
 const openButton = document.querySelector("[data-nav-open]");
@@ -317,22 +153,25 @@ const closeButton = document.querySelector("[data-nav-close]");
 const navigationLinks = document.querySelectorAll(".nav-link");
 
 function setNavigationState(isOpen) {
-  if (!sidebar || !openButton) {
-    return;
-  }
-
+  if (!sidebar || !openButton) return;
   sidebar.classList.toggle("is-open", isOpen);
   openButton.setAttribute("aria-expanded", String(isOpen));
 }
 
-if (openButton) {
+if (openButton)
   openButton.addEventListener("click", () => setNavigationState(true));
-}
-
-if (closeButton) {
+if (closeButton)
   closeButton.addEventListener("click", () => setNavigationState(false));
-}
-
 navigationLinks.forEach((link) => {
-  link.addEventListener("click", () => setNavigationState(false));
+  link.addEventListener("click", (event) => {
+    if (link.dataset.view) {
+      event.preventDefault();
+      currentView = link.dataset.view;
+      ui.setActiveNavigation(link);
+      renderCurrentView();
+    }
+    setNavigationState(false);
+  });
 });
+
+renderCurrentView();

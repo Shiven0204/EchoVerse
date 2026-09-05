@@ -564,7 +564,7 @@ h1 {
 }
 .track-row {
   display: grid;
-  grid-template-columns: 32px 46px minmax(0, 1fr) 45px 30px;
+  grid-template-columns: 32px 46px minmax(0, 1fr) 45px 34px 30px;
   align-items: center;
   gap: 13px;
   min-height: 68px;
@@ -576,6 +576,22 @@ h1 {
   padding: 0 10px;
   border-radius: var(--radius-sm);
   background: var(--color-surface);
+}
+.track-row.active-song {
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.track-row.active-song .track-number,
+.track-row.active-song .track-meta {
+  color: var(--color-accent);
+}
+.like-button {
+  font-size: 18px;
+}
+.like-button.is-liked {
+  color: #e77c74;
 }
 .track-number {
   color: var(--color-subtle);
@@ -592,6 +608,23 @@ h1 {
   font-family: Georgia, serif;
   font-size: 11px;
   font-weight: 700;
+}
+.empty-state {
+  margin: 0;
+  padding: 32px 16px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-muted);
+  text-align: center;
+}
+.library-overview[hidden],
+.popular-section[hidden] {
+  display: none;
+}
+.library-group + .library-group {
+  margin-top: 42px;
+}
+.library-group .section-heading {
+  margin-bottom: 14px;
 }
 .track-info h3 {
   overflow: hidden;

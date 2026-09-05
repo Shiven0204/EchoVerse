@@ -10,7 +10,7 @@
     <title>EchoVerse | Find your next sound</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsive.css" />
-    <script src="js/app.js" defer></script>
+    <script type="module" src="js/app.js"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -32,11 +32,20 @@
 
         <nav class="primary-nav" aria-label="Primary navigation">
           <p class="nav-label">Explore</p>
-          <a class="nav-link is-active" href="#home">
+          <a class="nav-link is-active" href="#home" data-view="all">
             <span class="nav-icon" aria-hidden="true">⌂</span>Home
           </a>
-          <a class="nav-link" href="#songs-title">
+          <a class="nav-link" href="#songs-title" data-view="all">
             <span class="nav-icon" aria-hidden="true">♫</span>Songs
+          </a>
+          <a class="nav-link" href="#library" data-view="library">
+            <span class="nav-icon" aria-hidden="true">▣</span>Library
+          </a>
+          <a class="nav-link" href="#liked-songs" data-view="liked">
+            <span class="nav-icon" aria-hidden="true">♡</span>Liked Songs
+          </a>
+          <a class="nav-link" href="#recently-played" data-view="recent">
+            <span class="nav-icon" aria-hidden="true">◷</span>Recently Played
           </a>
         </nav>
 
@@ -65,6 +74,16 @@
             <span class="eyebrow">EchoVerse</span>
             <h1>Local songs</h1>
           </div>
+          <form class="search-form" role="search">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <label class="sr-only" for="song-search">Search songs</label>
+            <input
+              id="song-search"
+              type="search"
+              placeholder="Search songs or artists"
+              autocomplete="off"
+            />
+          </form>
         </header>
 
         <main class="main-content" id="home">
@@ -78,55 +97,31 @@
                 <h2 id="songs-title">Songs</h2>
               </div>
             </div>
-            <div class="track-list">
-              <article class="track-row" data-song-index="0">
-                <span class="track-number">01</span>
-                <div class="mini-art artwork-static"><span>BR</span></div>
-                <div class="track-info">
-                  <h3>Barsaat</h3>
-                  <p>Banjaare &amp; Roni</p>
-                </div>
-                <span class="track-meta">3:05</span>
-                <button
-                  class="icon-button track-play"
-                  type="button"
-                  aria-label="Play Barsaat"
-                >
-                  ▶
-                </button>
-              </article>
-              <article class="track-row" data-song-index="1">
-                <span class="track-number">02</span>
-                <div class="mini-art artwork-tide"><span>B</span></div>
-                <div class="track-info">
-                  <h3>Bairan</h3>
-                  <p>Banjaare</p>
-                </div>
-                <span class="track-meta">2:30</span>
-                <button
-                  class="icon-button track-play"
-                  type="button"
-                  aria-label="Play Bairan"
-                >
-                  ▶
-                </button>
-              </article>
-              <article class="track-row" data-song-index="2">
-                <span class="track-number">03</span>
-                <div class="mini-art artwork-dawn"><span>TZ</span></div>
-                <div class="track-info">
-                  <h3>Tu Zaroori</h3>
-                  <p>Sharib Toshi, Sunidhi Chauhan &amp; Sharib Sabri</p>
-                </div>
-                <span class="track-meta">4:49</span>
-                <button
-                  class="icon-button track-play"
-                  type="button"
-                  aria-label="Play Tu Zaroori"
-                >
-                  ▶
-                </button>
-              </article>
+            <div class="track-list" aria-live="polite"></div>
+          </section>
+          <section
+            class="library-overview"
+            id="library"
+            aria-label="Library"
+            hidden
+          >
+            <div class="library-group">
+              <div class="section-heading"><h2>Liked Songs</h2></div>
+              <div
+                class="track-list library-liked-list"
+                aria-live="polite"
+              ></div>
+            </div>
+            <div class="library-group">
+              <div class="section-heading"><h2>Recently Played</h2></div>
+              <div
+                class="track-list library-recent-list"
+                aria-live="polite"
+              ></div>
+            </div>
+            <div class="library-group">
+              <div class="section-heading"><h2>All Songs</h2></div>
+              <div class="track-list library-all-list" aria-live="polite"></div>
             </div>
           </section>
         </main>
